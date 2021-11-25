@@ -5,9 +5,9 @@
 #include <chrono>
 
 void test_basic() {
-    logback lb;
+    logback* lb = logback::get_logback();
     logger::setup_output_func([&lb](const char* data, int len){
-        lb.feed(data, len);
+        lb->feed(data, len);
     });
 
     for( int i = 0; i < 10000; i++){
@@ -22,9 +22,9 @@ void test_basic() {
 
 
 void test_multithread_core(){
-    static logback lb;
+    static logback* lb = logback::get_logback();
     logger::setup_output_func([](const char* data, int len){
-        lb.feed(data, len);
+        lb->feed(data, len);
     });
 
     for( int i = 0; i < 50000; i++){
@@ -55,9 +55,9 @@ void test_multithread_log() {
 }
 
 void test_slow_log() {
-        logback lb;
+        logback* lb = logback::get_logback();
         logger::setup_output_func([&lb](const char* data, int len){
-            lb.feed(data, len);
+            lb->feed(data, len);
         });
         LOG_TRACE << "LOG TRACE " << "level : " << logger::LOG_LEVEL::TRACE ;
         std::this_thread::sleep_for(std::chrono::seconds(3) ) ;

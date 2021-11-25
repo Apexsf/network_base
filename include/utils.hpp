@@ -23,6 +23,16 @@ inline void return_value_check_equal(int value, int target) {
     assert(value == target);
 }
 
+inline void return_value_check_less(int value, int target) {
+    assert (value < target);
+}
+
+inline void return_value_check_more(int value, int target) {
+    assert(value > target);
+}
+
+
+
 
 
 #endif

@@ -18,7 +18,16 @@ public:
     using log_buf_uq_t  = std::unique_ptr<log_buf_t>;
     static struct timespec wait_time ; //try to output buffer every 2 second regardless full or not
     
-    logback();
+    static logback* get_logback() {
+        static logback single_logback;
+        return &single_logback;
+    }
+
+    logback(logback&) = delete;
+    logback& operator = (logback&) = delete;
+
+
+
 
     ~logback();
     
@@ -32,6 +41,7 @@ public:
 
 
 private:
+    logback();
     bool m_running;
     int log_buf_size;
     thread m_thread;

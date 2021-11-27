@@ -20,14 +20,14 @@ public:
  * @brief epoll-based poller 
  * 
  */
-class epoller : public poller {
+class epoller  {
 public:
     static epoller* get_epoller() {
         static epoller epoller_instance;
         return &epoller_instance;
     }
 
-    void poll (std::vector<iohandler*>&, int timeout) override;
+    void poll (std::vector<iohandler*>&, int timeout);
 
     /**
      * @brief update handler, either by add, mod or del.

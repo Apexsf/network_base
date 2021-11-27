@@ -11,7 +11,7 @@ public:
     using read_func = std::function<void()>;
     using write_func = std::function<void()>;
 
-    iohandler();
+    iohandler(int fd, eventloop* loop);
     enum class poller_op {
         ADD = 0,
         MOD,
@@ -33,6 +33,9 @@ public:
     int get_event();
     poller_op get_op();
     int get_fd();
+
+    void handle_event();
+
 
 private:
     read_func m_read_cb;

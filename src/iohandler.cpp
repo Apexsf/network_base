@@ -2,7 +2,8 @@
 #include "eventloop.hpp"
 
 
-iohandler::iohandler():m_event(EPOLLIN), m_op(poller_op::NONE) {
+iohandler::iohandler(int fd, eventloop* loop):m_fd(fd), m_loop(loop),
+m_event(EPOLLIN), m_op(poller_op::NONE) {
 
 }
 
@@ -54,3 +55,11 @@ void iohandler::set_write_cb(write_func cb) {
     m_write_cb = std::move(cb);
 }
 
+
+
+
+void iohandler::handle_event(){
+    if (m_polled_event & (EPOLLIN | EPOLLPRI | EPOLLHUP)) {
+        m_read_cb();
+    }
+}

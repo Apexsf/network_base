@@ -1,7 +1,7 @@
 #include "poller.hpp"
 
 
-epoller::epoller() : poller(), m_event_buf(EPOLL_MIN_EVENT) {
+epoller::epoller() :  m_event_buf(EPOLL_MIN_EVENT) {
     m_epoll_fd = epoll_create(1);
     return_value_check_more(m_epoll_fd, -1);
 }
@@ -72,7 +72,7 @@ void epoller::poll(std::vector<iohandler*>& handlers, int timeout) {
 
     if (num == m_event_buf.size() && num <= EPOLL_MAX_EVENT) {
         int new_size = m_event_buf.size();
-        m_event_buf.resize(new_size);
+        m_event_buf.resize(new_size*2);
     }
     
 }

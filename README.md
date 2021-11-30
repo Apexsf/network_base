@@ -11,5 +11,5 @@
 EOF). 
 Therefore, ```epoll_wait``` will return immediately all the time if this connected fd being registered
 to the corresponding epoll fd as read event (EPOLLIN) in level trigger mode.
-To avoid this, we may choose to close the connected fd once ```recv``` return 0. See [SO](https://stackoverflow.com/questions/14563134/epoll-loops-on-disconnection-of-a-client) for more details.
+To avoid this, we may choose to close the connected fd once ```recv``` returns 0. See [SO](https://stackoverflow.com/questions/14563134/epoll-loops-on-disconnection-of-a-client) for more details.
 

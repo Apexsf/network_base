@@ -11,11 +11,12 @@ public:
     eventloop();
     void update(iohandler*);
     void loop();
+    void timer_seq_read_cb();
 
 private:
     epoller* m_poller;
     std::unique_ptr<timer_sequence> m_timer_seq;
-
+    
 };
 
 

@@ -3,9 +3,12 @@
 
 
 
-eventloop::eventloop():m_poller(epoller::get_epoller()),
-    m_timer_seq(std::make_unique<timer_sequence>())
+eventloop::eventloop():m_poller(epoller::get_epoller())
+    // m_timer_seq(std::make_unique<timer_sequence>())
  {
+     int fd = timerfd_create(CLOCK_MONOTONIC, TFD_NONBLOCK);
+     return_value_check_more(fd, -1);
+     m_timer_seq.reset(new timer_sequence(this, fd));
 
 }
 
@@ -24,5 +27,9 @@ void eventloop::loop() {
         }
     }
 
+}
+
+void eventloop::timer_seq_read_cb() {
+    
 }
 

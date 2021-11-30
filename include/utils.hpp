@@ -33,6 +33,4 @@ inline void return_value_check_more(int value, int target) {
 
 
 
-
-
 #endif

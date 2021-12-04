@@ -60,7 +60,7 @@ void epoller::del(iohandler* handler) {
 void epoller::poll(std::vector<iohandler*>& handlers, int timeout) {
     int num = epoll_wait(m_epoll_fd, m_event_buf.data(), m_event_buf.size(), timeout);
     if (num == -1) {
-        LOG_ERROR << "EPOLL WAIT ERROR";
+        LOG_ERROR << "EPOLL WAIT ERROR," << "errno : " << errno << ", " << get_errno_name(errno);
         return;
     }
     for(int i = 0; i < num; i++) {

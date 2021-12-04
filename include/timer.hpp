@@ -91,10 +91,12 @@ public:
     using timer_func = std::function<void()>;
     timer_task(const timer_func&, const time_point&, const time_duration& interval);
     const time_point& get_time_point() const;
+    const time_duration& get_time_interval() const;
+    const timer_func& get_task() const;
     void reset_task(const timer_func&);
     void reset_time_point(const time_point&);
     void call();
-
+    bool is_periodic();
 
     struct timer_task_less {
         bool operator() (const timer_task& left, const timer_task& right) const{

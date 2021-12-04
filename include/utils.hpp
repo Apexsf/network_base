@@ -9,6 +9,7 @@
 #include <iomanip>
 #include <assert.h>
 #include <sys/stat.h>
+#include <string.h>
 
 #define LOCALTIME
 // #define GMTTIME
@@ -30,6 +31,11 @@ inline void return_value_check_less(int value, int target) {
 inline void return_value_check_more(int value, int target) {
     assert(value > target);
 }
+
+inline std::string get_errno_name (int err) {
+    return strerror(err);
+}
+
 
 
 

@@ -71,12 +71,21 @@ struct timespec time_util::timepoint_2_timespec (const time_point& tp) {
 timer_task::timer_task(const timer_func& task, const time_point& point, const time_duration& interval) 
 : m_task(task),m_time_point(point), m_interval(interval)
 {
-
+    
 } 
 
 const time_point& timer_task::get_time_point() const {
     return m_time_point;
 }
+
+const time_duration& timer_task::get_time_interval() const {
+    return m_interval;
+}
+
+const timer_task::timer_func& timer_task::get_task() const {
+    return m_task;
+}
+
 
 void timer_task::reset_task(const timer_func& task){
     m_task = task;
@@ -90,9 +99,16 @@ void timer_task::call() {
     m_task();
 }
 
+bool timer_task::is_periodic() {
+    return !m_interval.is_zero();
+}
+
+
 timer_sequence::timer_sequence(eventloop* loop, int timer_fd):
 m_loop(loop), m_timer_fd(timer_fd), m_timerfd_handler(timer_fd, loop) {
-
+    m_timerfd_handler.set_read_cb([this](){this->m_read_cb();});
+    m_timerfd_handler.set_ev_read();
+    m_timerfd_handler.add_to_poller();
 }
 
 void timer_sequence::insert(const timer_task& task) {

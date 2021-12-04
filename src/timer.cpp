@@ -8,6 +8,7 @@ bool operator < (const time_point& left, const time_point& right){
 
 time_point::time_point(const time_point::timer_point& tp):m_time(tp) {}
 
+
 void time_point::set_now() {
     m_time = timer_clock :: now();    
 }
@@ -23,6 +24,11 @@ const time_point::timer_point& time_point::get_time() const {
 time_point::rep time_point::get_count() {
     return m_time.time_since_epoch().count();
 }
+
+void time_point::advance(const time_duration& td) {
+    m_time += td.get_chrono_nanosecond();
+}
+
 
 
 time_duration::time_duration(double second) {
@@ -80,14 +86,44 @@ void timer_task:: reset_time_point(const time_point& timer) {
     m_time_point = timer;
 }
 
+void timer_task::call() {
+    m_task();
+}
+
 timer_sequence::timer_sequence(eventloop* loop, int timer_fd):
 m_loop(loop), m_timer_fd(timer_fd), m_timerfd_handler(timer_fd, loop) {
 
 }
 
-
 void timer_sequence::insert(const timer_task& task) {
     m_timer_task_multiset.insert(task);
+    reset_earliest_time();
+}
+
+void timer_sequence::insert(const timer_task::timer_func& func, const time_point& tp,
+    const time_duration& td) {
+    m_timer_task_multiset.emplace(func, tp, td);
+    reset_earliest_time();
+}
+
+std::vector<timer_task> timer_sequence::remove_and_get_expired_task(const time_point& tp) {
+    // be careful the pitfall here, the m_task of tmp is just set to nullptr for the following
+    // upper_bound search , we should never execute m_task of tmp.
+    timer_task tmp(nullptr, tp, time_duration::zero_time_duration());
+    
+    // upper_bound finds the first element that greater than the given value 
+    // lower_bound finds the first element that equal or greater than the given value
+    // here we choose upper bound which means that the tasks with expired time being 
+    // just the same as the passed tp will be also removed and returned
+    timer_task_set::iterator it = m_timer_task_multiset.upper_bound(tmp);
+
+    std::vector<timer_task> vec;
+    std::copy(m_timer_task_multiset.begin(), it, std::back_inserter(vec));
+    m_timer_task_multiset.erase(m_timer_task_multiset.begin(), it);
+    return vec;
+}
+
+void timer_sequence::reset_earliest_time() {
     timer_task_set::iterator first_it = m_timer_task_multiset.begin();
     if (first_it != m_timer_task_multiset.end()){
         const time_point& expired_point = first_it->get_time_point();
@@ -101,15 +137,3 @@ void timer_sequence::insert(const timer_task& task) {
         timerfd_settime(m_timer_fd,TFD_TIMER_ABSTIME,&itimer_new,nullptr);
     }
 }
-
-std::vector<timer_task> timer_sequence::get_expired_task(const time_point& tp) {
-    // be careful the pitfall here, the m_task of tmp is just set to nullptr for the following
-    // upper_bound search , we should never execute m_task of tmp.
-    timer_task tmp(nullptr, tp);
-    timer_task_set::iterator it = m_timer_task_multiset.upper_bound(tmp);
-
-    std::vector<timer_task> vec;
-    std::copy(m_timer_task_multiset.begin(), it, std::back_inserter(vec));
-    return vec;
-}
-

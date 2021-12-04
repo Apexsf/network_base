@@ -12,7 +12,7 @@
 #include <string.h>
 #include "iohandler.hpp"
 
-
+class time_duration; // forward declaration
 /**
  * @brief TODO: encapsulate with unix timespec directly to avoid conversion between std::chrono and unix timespec for timerfd_XXX function.
  * 
@@ -35,6 +35,7 @@ public:
     }
 
     void advance(double seconds);
+    void advance(const time_duration& td);
 
     friend bool operator < (const time_point& left, const time_point& right);
   
@@ -60,6 +61,14 @@ public:
      */
     explicit time_duration(const nanoseconds&);
 
+    static time_duration zero_time_duration() {
+        return time_duration(nanoseconds(0));
+    }
+
+    bool is_zero() {
+        return m_dur == nanoseconds(0);
+    }
+
     const nanoseconds& get_chrono_nanosecond() const {
         return m_dur;
     }
@@ -80,11 +89,13 @@ struct time_util {
 class timer_task {
 public:
     using timer_func = std::function<void()>;
-    timer_task(const timer_func&, const time_point&, const time_duration& interval = time_duration(0));
+    timer_task(const timer_func&, const time_point&, const time_duration& interval);
     const time_point& get_time_point() const;
     void reset_task(const timer_func&);
     void reset_time_point(const time_point&);
-    
+    void call();
+
+
     struct timer_task_less {
         bool operator() (const timer_task& left, const timer_task& right) const{
             return left.m_time_point < right.m_time_point;
@@ -103,6 +114,10 @@ private:
  * It is the responsibiliess of eventloop to handle the expired timer task, while 
  * timer_sequence only manages the timer task set and provides the get_expired_task  
  * interface for the further usage of eventloop.
+ * Besides, note that tiemr_sequence is invisible to user.
+ * 
+ * TODO: change the element store in the internal multiset to raw pointer or 
+ * smart point to avoid frequent copy
  *   
  */
 class timer_sequence{
@@ -122,19 +137,35 @@ public:
      */
     void insert(const timer_task&);
 
+
+
+    /**
+     * @brief prefered insert method, which can take advantage of multiset emplace
+     * method to avoid a extra copy
+     * 
+     * @param func, @param tp, @param td, are the arguments of time_task constructor
+     */
+    void insert(const timer_task::timer_func& func, const time_point& tp,
+    const time_duration& td);
+
+
     /**
      * @brief Get the timer_tasks of which the expired time is earlier than tp 
      * 
      * @return std::vector<timer_task>.
      */
-    std::vector<timer_task> get_expired_task(const time_point& tp);
+    std::vector<timer_task> remove_and_get_expired_task(const time_point& tp);
+
+    void reset_earliest_time();
 private:
     using timer_task_set = std::multiset<timer_task, timer_task::timer_task_less>;
+  
     eventloop* m_loop;
     int m_timer_fd; 
     iohandler m_timerfd_handler;
     timer_task_set m_timer_task_multiset; // alternative structure is priority queue, may be testing later
     read_cb m_read_cb;
+
 };
 
 

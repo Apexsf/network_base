@@ -24,6 +24,10 @@ inline void return_value_check_equal(int value, int target) {
     assert(value == target);
 }
 
+inline void return_value_check_unequal (int value, int target) {
+    assert(value != target);
+}
+
 inline void return_value_check_less(int value, int target) {
     assert (value < target);
 }
@@ -36,6 +40,9 @@ inline std::string get_errno_name (int err) {
     return strerror(err);
 }
 
+inline void mem_zero(void* p, size_t n) {
+    memset(p, 0, n);
+}
 
 
 

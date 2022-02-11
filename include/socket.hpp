@@ -13,8 +13,6 @@ struct socket_util {
 };
 
 
-
-
 class general_socket {
 public:
     /**
@@ -37,6 +35,10 @@ public:
         return m_sock_fd;
     }
 
+    void set_nonblocking() {
+        set_fd_nonblocking(m_sock_fd);
+    }
+
 protected:
     int m_sock_fd;
 };
@@ -44,6 +46,8 @@ protected:
 
 class listening_socket : public general_socket {
 public:
+    
+
     /**
      * @brief construct listen_socket from an initialized address
      * 
@@ -57,7 +61,14 @@ public:
      * @param is_any if true, set bind address too INADDR_ANY, else INADDR_LOOPBACK
      */
     listening_socket(uint16_t port, bool is_any = true, bool is_ipv4 = true);
-    
+
+    int accept (inet_address& addr) {
+        socklen_t sock_len = addr.size();
+        int conn_fd = ::accept(m_sock_fd, addr.get_sockaddr(), &sock_len);
+        return_value_check_more(conn_fd, -1);
+        return conn_fd;
+    }
+
 
 private:
     /**
@@ -67,9 +78,6 @@ private:
     void init();
     inet_address m_addr;
 };
-
-
-
 
 
 

@@ -11,6 +11,13 @@ public:
     using read_func = std::function<void()>;
     using write_func = std::function<void()>;
 
+    /**
+     * @brief Construct a new iohandler object, note that any fd passed
+     * to this ctr will be set to non-blocking.
+     * 
+     * @param fd 
+     * @param loop 
+     */
     iohandler(int fd, eventloop* loop);
     enum class poller_op {
         ADD = 0,
@@ -18,6 +25,8 @@ public:
         DELETE,
         NONE
     };
+
+    void set_fd_nonblocking();
 
     void add_to_poller();
     void mod_on_poller();

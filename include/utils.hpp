@@ -10,6 +10,7 @@
 #include <assert.h>
 #include <sys/stat.h>
 #include <string.h>
+#include <fcntl.h>
 
 #define LOCALTIME
 // #define GMTTIME
@@ -42,6 +43,13 @@ inline std::string get_errno_name (int err) {
 
 inline void mem_zero(void* p, size_t n) {
     memset(p, 0, n);
+}
+
+inline void set_fd_nonblocking(int fd) {
+    int flags = fcntl(fd, F_GETFL, 0);
+    return_value_check_unequal(flags, -1);
+    int ret =  fcntl(fd, F_SETFL, flags | O_NONBLOCK);
+    return_value_check_unequal(ret, -1);
 }
 
 

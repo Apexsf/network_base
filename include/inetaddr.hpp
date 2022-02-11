@@ -15,6 +15,11 @@ class inet_utils {
 
 class inet_address {
 public:
+
+  inet_address(bool is_ipv4):inet_address(0, true, is_ipv4){
+
+  }
+
   inet_address(struct sockaddr_in in_addr) : m_in_addr(in_addr) {
 
   }
@@ -41,6 +46,10 @@ public:
 
   bool is_ipv4 () {
       return get_sockaddr()->sa_family == AF_INET;
+  }
+
+  socklen_t size() {
+      return is_ipv4() ? sizeof (sockaddr_in) : sizeof (sockaddr_in6);
   }
 
 

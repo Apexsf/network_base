@@ -26,7 +26,7 @@ general_socket(AF_INET, SOCK_STREAM,0) {
 
 void listening_socket::init() {
     int ret;
-    ret = ::bind(m_sock_fd, m_addr.get_sockaddr(), sizeof(struct sockaddr));
+    ret = ::bind(m_sock_fd, m_addr.get_sockaddr(), m_addr.size());
     return_value_check_equal(ret, 0);
 
     ret = ::listen(m_sock_fd, SOMAXCONN);

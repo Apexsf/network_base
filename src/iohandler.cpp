@@ -1,15 +1,19 @@
 #include "iohandler.hpp"
 #include "eventloop.hpp"
+#include "utils.hpp"
 
 
 iohandler::iohandler(int fd, eventloop* loop):m_fd(fd), m_loop(loop),
 m_event(EPOLLIN), m_op(poller_op::NONE) {
-
+    set_fd_nonblocking();
 }
-
 
 iohandler::poller_op iohandler::get_op() {
     return m_op;
+}
+
+void iohandler::set_fd_nonblocking() {
+    ::set_fd_nonblocking(m_fd);
 }
 
 int iohandler::get_event() {

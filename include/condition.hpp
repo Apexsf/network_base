@@ -33,7 +33,7 @@ public:
 
     void time_wait(const struct timespec* tm) {
         int ret = pthread_cond_timedwait(&m_cond_t,m_mutex.get_mutex_t(),tm);
-        if (ret = 110) ret = 0;
+        if (ret == ETIMEDOUT) ret = 0;
         return_value_check_equal(ret,0);
     }
 

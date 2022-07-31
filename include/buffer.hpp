@@ -4,7 +4,7 @@
 #include <string.h>
 
 #define SMALL_BUFFER 4096
-#define LARGE_BUFFER 4096 * 100
+#define LARGE_BUFFER 4096 * 10
 
 
 template<int BUFFSIZE>

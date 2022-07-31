@@ -6,7 +6,11 @@ using std::endl;
 
 void test_construct () {
     small_buffer sb;
-    large_buffer lg;
+    large_buffer lb;
+    small_buffer* psb = new small_buffer;
+    large_buffer* plg = new large_buffer;
+    delete psb; 
+    delete plg;
 }
 
 void test_consecutive_write() {

@@ -65,7 +65,7 @@ void logback::working() { // single thread
 
     while(m_running) {
         lock_guard lk(m_mutex);
-        if (m_full_bufs.empty()) {
+        if (m_full_bufs.empty() && m_running) {
             cond.time_wait(&wait_time);
         }
 

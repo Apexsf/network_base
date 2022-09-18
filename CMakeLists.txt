@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 project(muduo_m)
 
-SET(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-pthread")
+SET(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-pthread -fPIC")
 
 set(INCLUDE_DIR  ${PROJECT_SOURCE_DIR}/include)
 

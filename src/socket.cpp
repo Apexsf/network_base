@@ -1,6 +1,19 @@
 #include "socket.hpp"
 
 
+void socket_util::setnonblocking(int sock) {
+    int opt;
+    opt = fcntl(sock, F_GETFL);
+    if (opt < 0) {
+        printf("fcntl(F_GETFL) fail.");
+    }
+    opt |= O_NONBLOCK;
+    if (fcntl(sock, F_SETFL, opt) < 0) {
+        printf("fcntl(F_SETFL) fail.");
+    }
+
+}
+
 general_socket::general_socket(int fd) : m_sock_fd (fd){
 
 }
@@ -31,4 +44,8 @@ void listening_socket::init() {
 
     ret = ::listen(m_sock_fd, SOMAXCONN);
     return_value_check_equal(ret, 0);
+}
+
+void listening_socket::set_non_block() {
+    socket_util::setnonblocking(m_sock_fd);
 }

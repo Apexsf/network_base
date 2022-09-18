@@ -9,7 +9,8 @@
 #include "inetaddr.hpp"
 
 struct socket_util {
-    
+    static void setnonblocking(int sock);
+
 };
 
 
@@ -68,6 +69,7 @@ public:
         return_value_check_more(conn_fd, -1);
         return conn_fd;
     }
+    void set_non_block();
 
 
 private:
